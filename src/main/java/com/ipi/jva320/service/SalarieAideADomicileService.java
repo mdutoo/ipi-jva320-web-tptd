@@ -37,7 +37,14 @@ public class SalarieAideADomicileService {
      * @return le nombre de salariés dans la base
      */
     public Long countSalaries() {
-        return salarieAideADomicileRepository.count();
+        try{
+            Long salariesCounted = salarieAideADomicileRepository.count();
+            return salariesCounted;
+        }
+        catch (NullPointerException e) {
+
+        }
+        return 0L;
     }
 
     /**

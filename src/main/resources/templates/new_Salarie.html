@@ -35,7 +35,7 @@
 
     <h2>Détail du salarié</h2>
     
-    <form id="saveForm" th:action="@{/salaries/{id}(id=${salarieDetails.id})}" method="post" class="row">
+    <form id="saveForm" action="@{/salaries/{salarieDetails.id}(id=${salarieDetails.id})}" method="post" class="row">
 
         <div class="col-lg-6">
             <div class="form-group">
