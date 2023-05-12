@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
   <title>Gestion des salariés</title>
   <link rel="stylesheet" href="/static/bootstrap.min.css">
   <link rel="stylesheet" href="/static/font-awesome.css">
 </head>
+<!--<head th:replace="~{common :: head }"></head>-->
 <body>
 
 <div>
@@ -47,16 +49,21 @@
         </tr>
         </thead>
         <tbody>
-        <tr>
-          <th scope="row">1</th>
-          <td>Jeanne Dupond</td>
-          <td><a href="/salaries/aide/2" class="btn btn-primary ember-view">Détail</a></td>
-        </tr>
-        <tr>
+        <div th:each="salarie : ${salaries}">
+            <tr>
+              <th scope="row" th:text="${salarie.id}"></th>
+              <td><a th:text="${salarie.nom}"
+                     ></a></td>
+              <td><a th:href="@{/salaries/{id}(id=${salarie.id})}" class="btn btn-primary ember-view">Détail</a></td>
+            </tr>
+        </div>
+
+        <tr th:unless="${salaries}">
           <th scope="row">2</th>
           <td>Robert Martin</td>
           <td><a href="/salaries/aide/3" class="btn btn-primary ember-view">Détail</a></td>
         </tr>
+
         </tbody>
       </table>
       <div class="row">
