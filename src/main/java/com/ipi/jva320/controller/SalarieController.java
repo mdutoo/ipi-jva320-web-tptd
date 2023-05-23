@@ -20,9 +20,6 @@ public class SalarieController {
 
     @GetMapping("/salaries/{id}")
     public String salariesDetails(@PathVariable(value = "id") String id, final ModelMap model) throws SalarieException {
-//        SalarieAideADomicile salarieAideADomicileJeannette = new SalarieAideADomicile("Jeannette Dupontelle", LocalDate.of(2021, 7, 1), LocalDate.now(), 0, 0, 10, 1, 0);
-//        salarieAideADomicileService.creerSalarieAideADomicile(salarieAideADomicileJeannette);
-
         SalarieAideADomicile salarieDetails = salarieAideADomicileService.getSalarie(Long.valueOf(id));
         model.put("salarieDetails", salarieDetails);
         return "detail_Salarie";
@@ -47,9 +44,16 @@ public class SalarieController {
     }
 
     @PostMapping("/salaries/aide/new")
-    public String createSalarie(@RequestBody SalarieAideADomicile salarieDetails, final ModelMap model) throws SalarieException {
+    public String createSalarie(SalarieAideADomicile salarieDetails) throws SalarieException {
         salarieAideADomicileService.creerSalarieAideADomicile(salarieDetails);
-        return "new_Salarie";
+        return "redirect:/salaries/" + salarieDetails.getId();
+    }
+
+    @GetMapping("/salaries/{id}/delete")
+    public String deleteSalarie(@PathVariable(value = "id") String id, final ModelMap model) throws SalarieException {
+        salarieAideADomicileService.deleteSalarieAideADomicile(Long.valueOf(id));
+        model.put("salarie_id", id);
+        return "redirect:/salaries/" + id;
     }
 
 

@@ -123,6 +123,7 @@ public class SalarieAideADomicileService {
         if (existantOptional.isEmpty()) {
             throw new SalarieException("Le salarié n'existe pas déjà d'id " + id); // TODO id ou nom ??
         }
+        System.out.println("DELETE");
         salarieAideADomicileRepository.deleteById(id);
     }
 
