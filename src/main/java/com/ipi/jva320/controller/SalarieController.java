@@ -26,8 +26,13 @@ public class SalarieController {
     }
 
     @GetMapping("/salaries")
-    public String listSalaries(final ModelMap model) {
-        List<SalarieAideADomicile> salaries = salarieAideADomicileService.getSalaries();
+    public String listSalaries(final ModelMap model, @RequestParam(value = "nom", required = false, defaultValue = "tousSalaries") String paramNom) {
+        List<SalarieAideADomicile> salaries;
+       if (paramNom.equals("tousSalaries")) {
+           salaries = salarieAideADomicileService.getSalaries();
+        } else {
+           salaries = salarieAideADomicileService.getSalaries(paramNom);
+        }
         model.put("salaries", salaries);
         return "list";
     }
@@ -52,9 +57,6 @@ public class SalarieController {
     @GetMapping("/salaries/{id}/delete")
     public String deleteSalarie(@PathVariable(value = "id") String id, final ModelMap model) throws SalarieException {
         salarieAideADomicileService.deleteSalarieAideADomicile(Long.valueOf(id));
-        model.put("salarie_id", id);
-        return "redirect:/salaries/" + id;
+        return "redirect:/salaries/";
     }
-
-
 }
