@@ -4,10 +4,13 @@ import com.ipi.jva320.exception.SalarieException;
 import com.ipi.jva320.model.SalarieAideADomicile;
 import com.ipi.jva320.service.SalarieAideADomicileService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Controller
@@ -21,6 +24,8 @@ public class SalarieController {
         SalarieAideADomicile salarieDetails = salarieAideADomicileService.getSalarie(Long.valueOf(id));
         model.put("salarieDetails", salarieDetails);
         model.put("titrePage", "Details du salarié");
+        model.put("titreLienNavBar", "Accueil");
+        model.put("nombreSalaries", salarieAideADomicileService.countSalaries());
         return "detail_Salarie";
     }
 
@@ -30,26 +35,37 @@ public class SalarieController {
        if (paramNom.equals("tousLesSalaries")) {
            salaries = salarieAideADomicileService.getSalaries();
         } else {
-           salaries = salarieAideADomicileService.getSalaries(paramNom);
+           salaries = salarieAideADomicileService.getSalaries(paramNom, Pageable.ofSize(3));
         }
         model.put("salaries", salaries);
         model.put("titrePage", "Liste des salariés");
+        model.put("titreLienNavBar", "Accueil");
+        model.put("nombreSalaries", salarieAideADomicileService.countSalaries());
         return "list";
     }
 
     @PostMapping("/salaries/{id}")
-    public String updateSalarie(SalarieAideADomicile salarieDetails) throws SalarieException {
+    public String updateSalarie(@Valid SalarieAideADomicile salarieDetails, BindingResult bindingResult) throws SalarieException {
+        if (bindingResult.hasErrors()) {
+            System.out.println("Problème de désérialisation");
+        }
         salarieAideADomicileService.updateSalarieAideADomicile(salarieDetails);
         return "redirect:/salaries/" + salarieDetails.getId();
     }
 
     @GetMapping("/salaries/aide/new")
     public String newSalarie(final ModelMap model){
+        model.put("titrePage", "Nouveau salarié");
+        model.put("titreLienNavBar", "Accueil");
+        model.put("nombreSalaries", salarieAideADomicileService.countSalaries());
         return "new_Salarie";
     }
 
     @PostMapping("/salaries/aide/new")
-    public String createSalarie(SalarieAideADomicile salarieDetails) throws SalarieException {
+    public String createSalarie(@Valid SalarieAideADomicile salarieDetails, BindingResult bindingResult) throws SalarieException {
+        if (bindingResult.hasErrors()) {
+            System.out.println("Problème de désérialisation");
+        }
         salarieAideADomicileService.creerSalarieAideADomicile(salarieDetails);
         return "redirect:/salaries/" + salarieDetails.getId();
     }

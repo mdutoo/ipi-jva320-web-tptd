@@ -1,6 +1,7 @@
 package com.ipi.jva320.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ public class SalarieAideADomicile {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @NotBlank(message="Requis !")
     private String nom;
 
     public static List<DayOfWeek> joursHabituellementTravailles = new ArrayList<DayOfWeek>();

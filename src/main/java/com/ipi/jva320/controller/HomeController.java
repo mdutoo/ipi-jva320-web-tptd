@@ -21,6 +21,7 @@ public class HomeController {
         //model.put("message", "Bienvenue dans l'interface d'administration RH ! ( " + salarieAideADomicileService.countSalaries() + " salariés)");
         model.put("nombreSalaries", salarieAideADomicileService.countSalaries());
         model.put("titrePage", "Aide à domicile RH - gestion des salariés");
+        model.put("titreLienNavBar", "Aide à domicile RH - gestion des salariés");
         return "home";
     }
 
