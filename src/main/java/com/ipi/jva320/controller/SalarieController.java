@@ -8,8 +8,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -22,18 +20,20 @@ public class SalarieController {
     public String salariesDetails(@PathVariable(value = "id") String id, final ModelMap model) throws SalarieException {
         SalarieAideADomicile salarieDetails = salarieAideADomicileService.getSalarie(Long.valueOf(id));
         model.put("salarieDetails", salarieDetails);
+        model.put("titrePage", "Details du salarié");
         return "detail_Salarie";
     }
 
     @GetMapping("/salaries")
-    public String listSalaries(final ModelMap model, @RequestParam(value = "nom", required = false, defaultValue = "tousSalaries") String paramNom) {
+    public String listSalaries(final ModelMap model, @RequestParam(value = "nom", required = false, defaultValue = "tousLesSalaries") String paramNom) {
         List<SalarieAideADomicile> salaries;
-       if (paramNom.equals("tousSalaries")) {
+       if (paramNom.equals("tousLesSalaries")) {
            salaries = salarieAideADomicileService.getSalaries();
         } else {
            salaries = salarieAideADomicileService.getSalaries(paramNom);
         }
         model.put("salaries", salaries);
+        model.put("titrePage", "Liste des salariés");
         return "list";
     }
 
