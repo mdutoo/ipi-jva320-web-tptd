@@ -34,7 +34,7 @@ public class SalarieController {
 
     @GetMapping("/salaries")
     public String listSalaries(final ModelMap model, @RequestParam(value = "nom", required = false, defaultValue = "tousLesSalaries") String paramNom,
-                               @RequestParam(value = "page") String paramPage, @RequestParam(value = "size") String paramSize) {
+                               @RequestParam(value = "page", defaultValue = "0" ) String paramPage, @RequestParam(value = "size", defaultValue = "10") String paramSize) {
        if (paramNom.equals("tousLesSalaries")) {
            Page<SalarieAideADomicile> salaries = salarieAideADomicileService.getSalaries(PageRequest.of(Integer.parseInt(paramPage), Integer.parseInt(paramSize), Sort.by("nom").ascending()));
            model.put("salaries", salaries);

@@ -74,7 +74,11 @@ public class SalarieAideADomicileService extends Exception{
      * @return le nombre de salariés dans la base
      */
     public List<SalarieAideADomicile> getSalaries(String nom, Pageable pageable) {
-        return salarieAideADomicileRepository.findAllByNom(nom, pageable);
+        List<SalarieAideADomicile> salaries = salarieAideADomicileRepository.findAllByNom(nom, pageable);
+        if (salaries.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, nom + " : non trouvé");
+        }
+        return salaries;
     }
 
     /**
