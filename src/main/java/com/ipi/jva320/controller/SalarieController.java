@@ -4,7 +4,10 @@ import com.ipi.jva320.exception.SalarieException;
 import com.ipi.jva320.model.SalarieAideADomicile;
 import com.ipi.jva320.service.SalarieAideADomicileService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -30,14 +33,20 @@ public class SalarieController {
     }
 
     @GetMapping("/salaries")
-    public String listSalaries(final ModelMap model, @RequestParam(value = "nom", required = false, defaultValue = "tousLesSalaries") String paramNom) {
-        List<SalarieAideADomicile> salaries;
+    public String listSalaries(final ModelMap model, @RequestParam(value = "nom", required = false, defaultValue = "tousLesSalaries") String paramNom,
+                               @RequestParam(value = "page") String paramPage, @RequestParam(value = "size") String paramSize) {
        if (paramNom.equals("tousLesSalaries")) {
-           salaries = salarieAideADomicileService.getSalaries();
+           Page<SalarieAideADomicile> salaries = salarieAideADomicileService.getSalaries(PageRequest.of(Integer.parseInt(paramPage), Integer.parseInt(paramSize), Sort.by("nom").ascending()));
+           model.put("salaries", salaries);
         } else {
-           salaries = salarieAideADomicileService.getSalaries(paramNom, Pageable.ofSize(3));
-        }
-        model.put("salaries", salaries);
+           List<SalarieAideADomicile> salaries = salarieAideADomicileService.getSalaries(paramNom, PageRequest.of(Integer.parseInt(paramPage), Integer.parseInt(paramSize), Sort.by("nom").ascending()));
+           model.put("salaries", salaries);
+       }
+        model.put("page", paramPage);
+        model.put("pagePremierSalarie", (Integer.parseInt(paramPage)*10)+1);
+        model.put("pageDernierSalarie", Math.min((Integer.parseInt(paramPage)* 10L)+10, salarieAideADomicileService.countSalaries()));
+        model.put("size", paramSize);
+        model.put("sortDirection", "ASC");
         model.put("titrePage", "Liste des salariés");
         model.put("titreLienNavBar", "Accueil");
         model.put("nombreSalaries", salarieAideADomicileService.countSalaries());
