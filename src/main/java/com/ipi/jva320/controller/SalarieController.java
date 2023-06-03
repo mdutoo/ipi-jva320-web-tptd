@@ -6,7 +6,6 @@ import com.ipi.jva320.service.SalarieAideADomicileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -35,17 +34,32 @@ public class SalarieController {
     @GetMapping("/salaries")
     public String listSalaries(final ModelMap model, @RequestParam(value = "nom", required = false, defaultValue = "tousLesSalaries") String paramNom,
                                @RequestParam(value = "page", defaultValue = "0" ) String paramPage, @RequestParam(value = "size", defaultValue = "10") String paramSize) {
-       if (paramNom.equals("tousLesSalaries")) {
+        boolean page0 = false;
+        boolean nextPageDisabled = false;
+        int countSalariesSearched;
+
+        if (paramNom.equals("tousLesSalaries")) {
            Page<SalarieAideADomicile> salaries = salarieAideADomicileService.getSalaries(PageRequest.of(Integer.parseInt(paramPage), Integer.parseInt(paramSize), Sort.by("nom").ascending()));
            model.put("salaries", salaries);
+           countSalariesSearched = (int) salaries.getTotalElements();
         } else {
            List<SalarieAideADomicile> salaries = salarieAideADomicileService.getSalaries(paramNom, PageRequest.of(Integer.parseInt(paramPage), Integer.parseInt(paramSize), Sort.by("nom").ascending()));
            model.put("salaries", salaries);
+            countSalariesSearched = salaries.size();
        }
+        if (Integer.parseInt(paramPage)==0) {
+            page0 = true;
+        }
+        if ((Integer.parseInt(paramPage)* 10L)+10 >= countSalariesSearched) {
+            nextPageDisabled = true;
+        }
+
         model.put("page", paramPage);
         model.put("pagePremierSalarie", (Integer.parseInt(paramPage)*10)+1);
-        model.put("pageDernierSalarie", Math.min((Integer.parseInt(paramPage)* 10L)+10, salarieAideADomicileService.countSalaries()));
+        model.put("pageDernierSalarie", Math.min((Integer.parseInt(paramPage)* 10L)+10, countSalariesSearched));
         model.put("size", paramSize);
+        model.put("page0", page0);
+        model.put("nextPageDisabled", nextPageDisabled);
         model.put("sortDirection", "ASC");
         model.put("titrePage", "Liste des salariés");
         model.put("titreLienNavBar", "Accueil");
