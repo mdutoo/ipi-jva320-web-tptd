@@ -7,9 +7,12 @@ import com.ipi.jva320.repository.SalarieAideADomicileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.EntityExistsException;
+import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -25,7 +28,7 @@ import java.util.stream.StreamSupport;
  * en créer, leur ajouter des congés (ajouteConge()), et les mettre à jour à la clôture de mois et d'année.
  */
 @Service
-public class SalarieAideADomicileService {
+public class SalarieAideADomicileService extends Exception{
 
     @Autowired
     private SalarieAideADomicileRepository salarieAideADomicileRepository;
@@ -37,7 +40,14 @@ public class SalarieAideADomicileService {
      * @return le nombre de salariés dans la base
      */
     public Long countSalaries() {
-        return salarieAideADomicileRepository.count();
+        try{
+            Long salariesCounted = salarieAideADomicileRepository.count();
+            return salariesCounted;
+        }
+        catch (NullPointerException e) {
+
+        }
+        return 0L;
     }
 
     /**
@@ -52,14 +62,23 @@ public class SalarieAideADomicileService {
      * @return le nombre de salariés dans la base
      */
     public List<SalarieAideADomicile> getSalaries(String nom) {
-        return salarieAideADomicileRepository.findAllByNom(nom, null);
+        List<SalarieAideADomicile> salaries = salarieAideADomicileRepository.findAllByNom(nom, null);
+        if (salaries.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, nom + " : non trouvé");
+        }
+        return salaries;
+
     }
 
     /**
      * @return le nombre de salariés dans la base
      */
     public List<SalarieAideADomicile> getSalaries(String nom, Pageable pageable) {
-        return salarieAideADomicileRepository.findAllByNom(nom, pageable);
+        List<SalarieAideADomicile> salaries = salarieAideADomicileRepository.findAllByNom(nom, pageable);
+        if (salaries.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, nom + " : non trouvé");
+        }
+        return salaries;
     }
 
     /**
@@ -116,6 +135,7 @@ public class SalarieAideADomicileService {
         if (existantOptional.isEmpty()) {
             throw new SalarieException("Le salarié n'existe pas déjà d'id " + id); // TODO id ou nom ??
         }
+        System.out.println("DELETE");
         salarieAideADomicileRepository.deleteById(id);
     }
 
