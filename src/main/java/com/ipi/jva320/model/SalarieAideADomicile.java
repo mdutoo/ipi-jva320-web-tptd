@@ -13,7 +13,6 @@ public class SalarieAideADomicile {
 
     public static float CONGES_PAYES_ACQUIS_PAR_MOIS = 2.5f;
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
