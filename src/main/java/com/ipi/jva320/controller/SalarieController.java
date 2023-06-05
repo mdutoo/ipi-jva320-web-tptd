@@ -1,15 +1,23 @@
 package com.ipi.jva320.controller;
 
+import java.util.List;
+
 import javax.persistence.EntityExistsException;
+import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.ipi.jva320.exception.SalarieException;
@@ -52,19 +60,18 @@ public class SalarieController {
 		return "redirect:/salaries";
 	}
 	
-	@GetMapping(value = "/salaries/findbynom")
-	public String find_salarie_by_name(final ModelMap model, BindingResult bindingResult, @RequestParam("nom") String nom) 
-			throws EntityExistsException, SalarieException {
-		Long id = null;
-		if (bindingResult.hasErrors()) {
+	@RequestMapping(value = "/salaries/findbynom", method = RequestMethod.GET)
+	public String find_salarie_by_name(SalarieAideADomicile salarieAideADomicile, BindingResult bindingResult, final ModelMap model, @RequestParam("nom") String nom) {
+		List<SalarieAideADomicile> salarie = salarieAideADomicileService.getSalaries(nom);
+		System.out.println(salarie);
+		if(salarie.size() == 0) {
+			model.put("error", "Erreur !");
 			System.out.println("Pas trouvé");
+			return "redirect:/";
 		}
-		else {
-			model.put("salaries",  salarieAideADomicileService.getSalaries(nom));
-	        SalarieAideADomicile salarieAideADomicileList = (SalarieAideADomicile) salarieAideADomicileService.getSalaries(nom);
-	        id = salarieAideADomicileList.getId();
-		}
-		return "redirect:/salaries/" + id;
+		//S'il y a plusieurs personnes avec le même nom, j'affiche le premier de la liste
+	    Long id = salarie.get(0).getId();
+	    return "redirect:/salaries/" + id;
 	}
 	
 	
