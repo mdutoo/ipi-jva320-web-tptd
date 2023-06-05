@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:fragment="head">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <title>Gestion des salariés</title>
+    <link rel="stylesheet" href="/static/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/font-awesome.css">
+</head>
+
+<body>
+    <div class="nav-div" th:fragment="menu">
+        <ul class="nav">
+            <li class="nav-item">
+                <a class="nav-link" href="/">Accueil</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/salaries">Liste des salariés</a>
+            </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0" role="search" th:action="@{/salaries/findbynom}" method="GET">
+            <div class="form-group form-inline">
+                <input name="nom" class="form-control" placeholder="Rechercher un nom" type="text">
+            </div>
+            <button type="submit" class="btn btn-outline-success ml-2 my-2 my-sm-0">Rechercher</button>
+        </form>
+        <p class="text-danger" th:text="${error}"></p>
+    </div>
+
+</body>
+<footer class="footer" th:fragment="footer">
+    Léa Cumont - CDEV
+</footer>
+
+</html>
